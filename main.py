@@ -1,12 +1,13 @@
-import os
-
 from discord.ext import commands
-from dotenv import load_dotenv
+from constants import Bot
 
-load_dotenv()
 
-bot = commands.Bot(command_prefix="!")
+bot = commands.Bot(command_prefix=commands.when_mentioned_or(Bot.prefix))
 
-bot.load_extension(f"cogs.test")
 
-bot.run(os.environ.get("BOT_TOKEN"))
+# Commands
+bot.load_extension("cogs.test")
+bot.load_extension("cogs.dso_trivia")
+
+
+bot.run(Bot.token)

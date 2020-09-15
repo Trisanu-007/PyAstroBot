@@ -1,0 +1,11 @@
+bot:
+    prefix: "\\"
+    token: !ENV "BOT_TOKEN"
+
+
+db:
+    host: "localhost"
+    user: "bot"
+    db: "bot"
+    port: 3306
+    password: !ENV "MYSQL_PASSWORD"

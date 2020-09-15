@@ -10,5 +10,5 @@ class Test(commands.Cog):
         await ctx.send("test")
 
 
-def setup(bot):
+def setup(bot) -> None:
     bot.add_cog(Test(bot))
