@@ -1,11 +1,29 @@
 bot:
-    prefix: "\\"
-    token: !ENV "BOT_TOKEN"
-
+    prefix:    "\\"
+    token:     !ENV "BOT_TOKEN"
 
 db:
-    host: "localhost"
-    user: "bot"
-    db: "bot"
-    port: 3306
+    host:     "localhost"
+    user:     "bot"
+    db:       "bot"
+    port:     3306
     password: !ENV "MYSQL_PASSWORD"
+
+image:
+    dsos:
+        - "3c273"
+        - "bullet_cluster"
+        - "cius"
+        - "dla_0817g"
+        - "goods_29323"
+        - "grb_150101b"
+        - "gw_151226"
+        - "h1821"
+        - "h2356"
+        - "h_candels"
+        - "j0717"
+        - "j1149"
+        - "jkcs_041"
+        - "m87"
+        - "ngc_2623"
+        - "snuds_10_wil"

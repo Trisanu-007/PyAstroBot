@@ -1,6 +1,8 @@
 import os
 import yaml
 
+from typing import List
+
 # load environment variables
 from dotenv import load_dotenv
 
@@ -53,7 +55,7 @@ def _join_var_constructor(loader, node):
 yaml.SafeLoader.add_constructor("!ENV", _env_var_constructor)
 yaml.SafeLoader.add_constructor("!JOIN", _join_var_constructor)
 
-with open("config.yml", encoding="UTF-8") as f:
+with open("../config.yml", encoding="UTF-8") as f:
     _CONFIG_YAML = yaml.safe_load(f)
 
 
@@ -121,3 +123,9 @@ class Db(metaclass=YAMLGetter):
     db: str
     port: int
     password: str
+
+
+class Image(metaclass=YAMLGetter):
+    section = "image"
+
+    dsos: List[str]
