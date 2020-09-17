@@ -115,7 +115,7 @@ class Bot(metaclass=YAMLGetter):
     token: str
 
 
-class Db(metaclass=YAMLGetter):
+class Database(metaclass=YAMLGetter):
     section = "db"
 
     host: str
@@ -123,6 +123,12 @@ class Db(metaclass=YAMLGetter):
     db: str
     port: int
     password: str
+
+
+class Leaderboard(metaclass=YAMLGetter):
+    section = "lb"
+
+    default_size: int
 
 
 class Image(metaclass=YAMLGetter):

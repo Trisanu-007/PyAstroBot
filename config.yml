@@ -9,6 +9,9 @@ db:
     port:     3306
     password: !ENV "MYSQL_PASSWORD"
 
+lb:
+    default_size: 5
+
 image:
     dsos:
         - "3c273"

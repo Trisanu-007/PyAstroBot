@@ -1,8 +1,10 @@
 import re
+
 import discord
 from discord.ext import commands
-from bot.constants import Db, Image
-import aiomysql
+
+from bot import database
+from bot.constants import Leaderboard
 
 
 class Question:
@@ -41,30 +43,24 @@ class DsoTrivia(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def start(self, ctx):
+    async def start(self, ctx) -> None:
         raise NotImplemented
 
     @commands.command()
     async def leaderboard(self, ctx, n: int = None) -> None:
-        conn = await aiomysql.connect(host=Db.host, user=Db.user, db=Db.db, port=Db.port, password=Db.password)
+        if n is None:
+            n = Leaderboard.default_size
 
-        async with await conn.cursor() as cursor:
-            # default is to display top 5
-            if n is None:
-                n = 5
-            await cursor.execute(f"SELECT name, correct_answers FROM score ORDER BY correct_answers DESC LIMIT 0, {n}")
-
-        rows = await cursor.fetchall()
+        rows = await database.get_top_n_scores(n)
 
         message = "\n".join(f"id <@{id_}> score {score}" for id_, score in rows)
 
         await ctx.send(message)
 
     @commands.command()
-    async def test(self, ctx):
-        # haven't changed file names yet, still using real name for testing
-        q = Question("3c273", "3c 273 optical")
-        await ctx.send(file=q.image)
+    async def increment(self, ctx, increment: int) -> None:
+        for member in ctx.message.mentions:
+            await database.increment_score(member.id, increment)
 
 
 def setup(bot) -> None:
