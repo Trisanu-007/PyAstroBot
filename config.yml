@@ -12,7 +12,8 @@ db:
 lb:
     default_size: 5
 
-image:
+trivia:
+    timeout: 30
     dsos:
         - "3c273"
         - "bullet_cluster"
@@ -29,4 +30,4 @@ image:
         - "jkcs_041"
         - "m87"
         - "ngc_2623"
-        - "snuds_10_wil"
+        - "sn_uds_10_wil"

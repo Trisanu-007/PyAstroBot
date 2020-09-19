@@ -1,17 +1,20 @@
+import asyncio
 import re
+import os
+import random
+from typing import Optional
 
 import discord
 from discord.ext import commands
 
 from bot import database
-from bot.constants import Leaderboard
+from bot.constants import Leaderboard, Trivia
 
 
 class Question:
-    def __init__(self, dso: str, n: int):
-        self.answer = dso.replace("-", "")
-
-        with open(f"images\\{dso}\\{n}", "rb") as image:
+    def __init__(self, path: str):
+        self.answer = path.split("\\")[1].replace("-", "")
+        with open(path, "rb") as image:
             self.image = discord.File(image)
 
     @staticmethod
@@ -41,26 +44,56 @@ class Question:
 class DsoTrivia(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.dsos = []
+
+        for dso in Trivia.dsos:
+            for file in os.listdir(f"images\\{dso}"):
+                self.dsos.append(f"images\\{dso}\\{file}")
 
     @commands.command()
     async def start(self, ctx) -> None:
-        raise NotImplemented
+        while True:
+            dso = random.choice(self.dsos)
+            print(dso)
+
+            q = Question(dso)
+
+            await ctx.send("What DSO is this?", file=q.image)
+
+            try:
+                message = await self.bot.wait_for("message", timeout=Trivia.timeout,
+                                                  check=lambda m: q.check_guess(m.content) and not m.author.bot)
+            except asyncio.TimeoutError:
+                return
+            else:
+                # answered correctly
+                await ctx.send(f"{message.author.mention} answered correctly!")
+                await database.increment_score(message.author.id)
+
+                print(message.content)
 
     @commands.command()
-    async def leaderboard(self, ctx, n: int = None) -> None:
-        if n is None:
-            n = Leaderboard.default_size
+    async def leaderboard(self, ctx, n: Optional[int] = None) -> None:
+        """
+        Display leaderboard with `n` users, or `Leaderboard.default_size` if `n` is not given
+        """
+
+        n = n or Leaderboard.default_size
 
         rows = await database.get_top_n_scores(n)
 
-        message = "\n".join(f"id <@{id_}> score {score}" for id_, score in rows)
+        message = []
+        for i, (id_, score) in enumerate(rows, 1):
+            t = ctx.guild.get_member(id_)
+            if t is None:
+                message.append(f"{i} {self.bot.get_user(id_)} score {score}")
+            else:
+                message.append(f"{i} {t.nick or t.name} score {score}")
 
-        await ctx.send(message)
-
-    @commands.command()
-    async def increment(self, ctx, increment: int) -> None:
-        for member in ctx.message.mentions:
-            await database.increment_score(member.id, increment)
+        if not message:
+            await ctx.send("No one has answered correctly yet")
+            return
+        await ctx.send("\n".join(message))
 
 
 def setup(bot) -> None:

@@ -131,7 +131,8 @@ class Leaderboard(metaclass=YAMLGetter):
     default_size: int
 
 
-class Image(metaclass=YAMLGetter):
-    section = "image"
+class Trivia(metaclass=YAMLGetter):
+    section = "trivia"
 
     dsos: List[str]
+    timeout: int
