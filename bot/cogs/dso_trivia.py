@@ -19,7 +19,9 @@ class Question:
 
     @staticmethod
     def _fuzzy_search(search: str, target: str) -> float:
-        """A simple scoring algorithm based on how many letters are found / total, with order in mind."""
+        """A simple scoring algorithm based on how many letters are found / total, with order in mind.
+        Taken from PyDis' bot
+        """
         REGEX_NON_ALPHANUMERIC = re.compile(r"\W", re.MULTILINE & re.IGNORECASE)
 
         current, index = 0, 0

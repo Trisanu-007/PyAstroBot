@@ -1,3 +1,8 @@
+"""
+Taken from PyDis' bot
+"""
+
+
 import os
 import yaml
 
