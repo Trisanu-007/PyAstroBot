@@ -7,13 +7,15 @@ from typing import Optional
 import discord
 from discord.ext import commands
 
-from bot import database
-from bot.constants import Leaderboard, Trivia
+#from bot import database
+#from bot.constants import Leaderboard, Trivia
+from constants import Leaderboard, Trivia
+import database
 
 
 class Question:
     def __init__(self, path: str):
-        self.answer = path.split("\\")[1].replace("-", "")
+        self.answer = path.split("/")[1].replace("-", "")
         with open(path, "rb") as image:
             self.image = discord.File(image)
 
@@ -22,7 +24,8 @@ class Question:
         """A simple scoring algorithm based on how many letters are found / total, with order in mind.
         Taken from PyDis' bot
         """
-        REGEX_NON_ALPHANUMERIC = re.compile(r"\W", re.MULTILINE & re.IGNORECASE)
+        REGEX_NON_ALPHANUMERIC = re.compile(
+            r"\W", re.MULTILINE & re.IGNORECASE)
 
         current, index = 0, 0
         _search = REGEX_NON_ALPHANUMERIC.sub('', search.lower())
@@ -49,8 +52,9 @@ class DsoTrivia(commands.Cog):
         self.dsos = []
 
         for dso in Trivia.dsos:
-            for file in os.listdir(f"images\\{dso}"):
-                self.dsos.append(f"images\\{dso}\\{file}")
+            for file in os.listdir(f"images/{dso}"):
+                self.dsos.append(f"images/{dso}/{file}")
+        # print(self.dsos)
 
     @commands.command()
     async def start(self, ctx) -> None:
@@ -59,13 +63,14 @@ class DsoTrivia(commands.Cog):
             print(dso)
 
             q = Question(dso)
-
             await ctx.send("What DSO is this?", file=q.image)
 
             try:
                 message = await self.bot.wait_for("message", timeout=Trivia.timeout,
                                                   check=lambda m: q.check_guess(m.content) and not m.author.bot)
+                print(message)
             except asyncio.TimeoutError:
+                print("Error!")
                 return
             else:
                 # answered correctly

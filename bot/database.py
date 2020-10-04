@@ -1,5 +1,5 @@
 import aiomysql
-from bot.constants import Database
+from constants import Database
 
 from typing import Optional
 
